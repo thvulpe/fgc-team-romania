@@ -23,6 +23,7 @@ public class Driving extends OpMode {
     DcMotorEx left = null;
     DcMotorEx right = null;
     DcMotorEx plate = null;
+    DcMotorEx sling = null;
     Servo front = null;
 
     @Override
@@ -30,14 +31,17 @@ public class Driving extends OpMode {
         left = hardwareMap.get(DcMotorEx.class, "left");
         right = hardwareMap.get(DcMotorEx.class, "right");
         plate = hardwareMap.get(DcMotorEx.class, "plate");
+        sling = hardwareMap.get(DcMotorEx.class, "sling");
         front = hardwareMap.get(Servo.class, "servo");
 
         left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         plate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        sling.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        sling.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         right.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -71,6 +75,10 @@ public class Driving extends OpMode {
         left.setPower(leftPower);
         right.setPower(rightPower);
 
+        if(gamepad1.dpad_up)
+            sling.setPower(.5f);
+        else
+            sling.setPower(0.01f);
     }
 
     boolean waitingLift = false, lifted = false;
@@ -108,6 +116,7 @@ public class Driving extends OpMode {
         telemetry.addData("yleftstick", gamepad1.left_stick_y);
         telemetry.addData("platepos", plate.getCurrentPosition());
         telemetry.addData("front", front.getPosition());
+        telemetry.addData("planeta", sling.getCurrentPosition());
         telemetry.update();
     }
 
