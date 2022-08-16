@@ -76,9 +76,11 @@ public class Driving extends OpMode {
         right.setPower(rightPower);
 
         if(gamepad1.dpad_up)
-            sling.setPower(.5f);
+            sling.setPower(1);
+        else if(gamepad1.dpad_down)
+            sling.setPower(-1);
         else
-            sling.setPower(0.01f);
+            sling.setPower(0);
     }
 
     boolean waitingLift = false, lifted = false;
@@ -94,7 +96,7 @@ public class Driving extends OpMode {
         if (!waitingLift) {
             lifted = true;
             plate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            if (plate.getCurrentPosition() < 69)
+            if (plate.getCurrentPosition() < 65)
                 plate.setPower(0.5);
             else plate.setPower(0);
         }
