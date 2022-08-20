@@ -24,6 +24,7 @@ public class Driving extends OpMode {
     DcMotorEx right = null;
     DcMotorEx plate = null;
     DcMotorEx sling = null;
+    DcMotorEx hook1 = null;
     Servo front = null;
 
     @Override
@@ -32,19 +33,20 @@ public class Driving extends OpMode {
         right = hardwareMap.get(DcMotorEx.class, "right");
         plate = hardwareMap.get(DcMotorEx.class, "plate");
         sling = hardwareMap.get(DcMotorEx.class, "sling");
+        hook1 = hardwareMap.get(DcMotorEx.class, "hook1");
         front = hardwareMap.get(Servo.class, "servo");
 
         left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         plate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         sling.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hook1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         sling.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         right.setDirection(DcMotorSimple.Direction.REVERSE);
-
         front.setDirection(Servo.Direction.REVERSE);
     }
 
@@ -59,7 +61,7 @@ public class Driving extends OpMode {
     @Override
     public void loop() {
         float sp = gamepad1.right_bumper ? 0.4f : 1f;
-        float ms = 0.8f;
+        float ms = gamepad1.left_bumper ? 1f : 0.8f;
 
         float leftPower = (-gamepad1.left_trigger + gamepad1.right_trigger - gamepad1.left_stick_y) * sp * ms;
         float rightPower = (gamepad1.left_trigger - gamepad1.right_trigger - gamepad1.left_stick_y) * sp * ms;
@@ -69,18 +71,42 @@ public class Driving extends OpMode {
 
         debugTelemetry();
 
-        if (gamepad1.a) upPlate();
+        if (gamepad1.a && !gamepad1.share) upPlate();
         else downPlate();
 
         left.setPower(leftPower);
         right.setPower(rightPower);
 
-        if(gamepad1.dpad_up)
-            sling.setPower(1);
-        else if(gamepad1.dpad_down)
-            sling.setPower(-1);
-        else
-            sling.setPower(0);
+
+        if(gamepad1.share) {
+            if (gamepad1.y)
+                sling.setPower(1);
+            else if (gamepad1.a)
+                sling.setPower(-1);
+            else
+                sling.setPower(0);
+
+            if (gamepad1.x) {
+                hook1.setPower(1);
+            } else if (gamepad1.b) {
+                hook1.setPower(-1);
+            } else {
+                hook1.setPower(0);
+            }
+        } else{
+            if(gamepad1.y) {
+                sling.setPower(1f);
+                hook1.setPower(1f);
+            } else if(gamepad1.x) {
+                sling.setPower(-1f);
+                hook1.setPower(-1f);
+            } else {
+                sling.setPower(0);
+                hook1.setPower(0);
+            }
+        }
+
+
     }
 
     boolean waitingLift = false, lifted = false;
@@ -96,7 +122,7 @@ public class Driving extends OpMode {
         if (!waitingLift) {
             lifted = true;
             plate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            if (plate.getCurrentPosition() < 65)
+            if (plate.getCurrentPosition() < 70)
                 plate.setPower(0.5);
             else plate.setPower(0);
         }
@@ -106,7 +132,7 @@ public class Driving extends OpMode {
         lifted = false;
         front.setPosition(0);
 
-        plate.setTargetPosition(-5);
+        plate.setTargetPosition(0);
         plate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         plate.setPower(1);
     }
@@ -118,7 +144,9 @@ public class Driving extends OpMode {
         telemetry.addData("yleftstick", gamepad1.left_stick_y);
         telemetry.addData("platepos", plate.getCurrentPosition());
         telemetry.addData("front", front.getPosition());
-        telemetry.addData("planeta", sling.getCurrentPosition());
+        telemetry.addData("lift", sling.getCurrentPosition());
+        telemetry.addData("carlig", hook1.getCurrentPosition());
+        telemetry.addData("share", gamepad1.share);
         telemetry.update();
     }
 
