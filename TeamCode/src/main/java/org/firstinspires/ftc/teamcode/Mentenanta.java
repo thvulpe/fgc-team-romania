@@ -99,10 +99,10 @@ public class Mentenanta extends OpMode {
             }
         } else{
             if(gamepad1.y) {
-                sling.setPower(1f);
+                sling.setPower(.72f);
                 hook1.setPower(1f);
             } else if(gamepad1.x) {
-                sling.setPower(-1f);
+                sling.setPower(-.72f);
                 hook1.setPower(-1f);
             } else {
                 sling.setPower(0);
