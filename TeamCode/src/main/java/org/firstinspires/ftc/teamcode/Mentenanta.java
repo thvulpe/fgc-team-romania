@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * encoder localizer heading may be significantly off if the track width has not been tuned).
  */
 @TeleOp(group = "drive")
-public class Driving extends OpMode {
+public class Mentenanta extends OpMode {
 
     ElapsedTime runtime = new ElapsedTime();
 
@@ -82,7 +82,6 @@ public class Driving extends OpMode {
         left.setPower(leftPower);
         right.setPower(rightPower);
 
-        /*
         if(gamepad1.share) {
             if (gamepad1.y)
                 sling.setPower(1);
@@ -109,28 +108,7 @@ public class Driving extends OpMode {
                 sling.setPower(0);
                 hook1.setPower(0);
             }
-        } */// inainte sa fie cu pozitie
-
-        //carlig sus 18395
-        //lift sus 20162
-
-        if(gamepad1.y){
-            sling.setTargetPosition(20162);
-            hook1.setTargetPosition(18395);
-            sling.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            hook1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            sling.setPower(1);
-            hook1.setPower(1);
-        } else if(gamepad1.x){
-            sling.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            hook1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            sling.setPower(-1f);
-            hook1.setPower(-1f);
-        } else if(sling.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER){
-            sling.setPower(0);
-            hook1.setPower(0);
         }
-
 
     }
 
