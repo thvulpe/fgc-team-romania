@@ -111,20 +111,22 @@ public class Driving extends OpMode {
             }
         } */// inainte sa fie cu pozitie
 
-        //carlig sus 33005
-        //lift sus 20162
+        //carlig sus 33005 25009
+        //lift sus 20162 20733
+
+        //switch lift 18479 carlig 21823
 
         if(gamepad1.y){
-            sling.setTargetPosition(20162);
-            hook1.setTargetPosition(33005);
+            sling.setTargetPosition(20733);
+            hook1.setTargetPosition(25009);
             sling.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             hook1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            sling.setPower(.72f);
+            sling.setPower((sling.getCurrentPosition() < 18479) ? .95f : .92f);
             hook1.setPower(1);
         } else if(gamepad1.x){
             sling.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             hook1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            sling.setPower(-.72f);
+            sling.setPower((sling.getCurrentPosition() >= 18479) ? -.92f : .95f);
             hook1.setPower(-1f);
         } else if(sling.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER){
             sling.setPower(0);

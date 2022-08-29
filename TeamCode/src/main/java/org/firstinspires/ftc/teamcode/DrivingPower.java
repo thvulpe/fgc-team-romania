@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * encoder localizer heading may be significantly off if the track width has not been tuned).
  */
 @TeleOp(group = "drive")
-public class Mentenanta extends OpMode {
+public class DrivingPower extends OpMode {
 
     ElapsedTime runtime = new ElapsedTime();
 
@@ -63,6 +63,8 @@ public class Mentenanta extends OpMode {
         runtime.reset();
     }
 
+    boolean climbing = false;
+
     @Override
     public void loop() {
         float sp = gamepad1.right_bumper ? 0.4f : 1f;
@@ -82,32 +84,31 @@ public class Mentenanta extends OpMode {
         left.setPower(leftPower);
         right.setPower(rightPower);
 
-        if(gamepad1.share) {
-            if (gamepad1.y)
-                sling.setPower(1);
-            else if (gamepad1.a)
-                sling.setPower(-1);
+        //carlig sus 33005 25009
+        //lift sus 20162 20733
+
+        //switch lift 18479 carlig 21823
+
+        if(gamepad1.y)
+            climbing = true;
+        else if(gamepad1.x)
+            climbing = false;
+
+        if(climbing){
+            if(hook1.getCurrentPosition() < 25009)
+                hook1.setPower(1);
+            else
+                hook1.setPower(0);
+            if(sling.getCurrentPosition() < 20100)
+                sling.setPower((sling.getCurrentPosition() < 16500) ? .95f : .8f);
             else
                 sling.setPower(0);
-
-            if (gamepad1.x) {
-                hook1.setPower(1);
-            } else if (gamepad1.b) {
-                hook1.setPower(-1);
-            } else {
-                hook1.setPower(0);
-            }
+        } else if(gamepad1.x){
+            sling.setPower((sling.getCurrentPosition() < 16500) ? -.95f : -.8f);
+            hook1.setPower(-1f);
         } else{
-            if(gamepad1.y) {
-                sling.setPower(.95f);
-                hook1.setPower(1f);
-            } else if(gamepad1.x) {
-                sling.setPower(-.95f);
-                hook1.setPower(-1f);
-            } else {
-                sling.setPower(0);
-                hook1.setPower(0);
-            }
+            sling.setPower(0);
+            hook1.setPower(0);
         }
 
     }
