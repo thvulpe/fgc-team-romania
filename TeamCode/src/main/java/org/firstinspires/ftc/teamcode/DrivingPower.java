@@ -23,8 +23,8 @@ public class DrivingPower extends OpMode {
     DcMotorEx left = null;
     DcMotorEx right = null;
     DcMotorEx plate = null;
-    DcMotorEx sling = null;
-    DcMotorEx hook1 = null;
+    DcMotorEx lift = null;
+    DcMotorEx hook = null;
     Servo front = null;
 
     @Override
@@ -32,28 +32,28 @@ public class DrivingPower extends OpMode {
         left = hardwareMap.get(DcMotorEx.class, "left");
         right = hardwareMap.get(DcMotorEx.class, "right");
         plate = hardwareMap.get(DcMotorEx.class, "plate");
-        sling = hardwareMap.get(DcMotorEx.class, "sling");
-        hook1 = hardwareMap.get(DcMotorEx.class, "hook1");
+        lift = hardwareMap.get(DcMotorEx.class, "lift");
+        hook = hardwareMap.get(DcMotorEx.class, "hook");
         front = hardwareMap.get(Servo.class, "servo");
 
         left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         plate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        sling.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        hook1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hook.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         plate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        sling.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hook1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hook.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        sling.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hook1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        hook.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         right.setDirection(DcMotorSimple.Direction.REVERSE);
         front.setDirection(Servo.Direction.REVERSE);
-        hook1.setDirection(DcMotorSimple.Direction.REVERSE);
+        hook.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     @Override
@@ -64,6 +64,13 @@ public class DrivingPower extends OpMode {
     }
 
     boolean climbing = false;
+
+    enum DriveMode {
+        AUTO,
+        MANUAL
+    }
+
+    DriveMode driveMode = DriveMode.MANUAL;
 
     @Override
     public void loop() {
@@ -91,26 +98,46 @@ public class DrivingPower extends OpMode {
 
         //switch lift 18479 carlig 21823
 
-        if(gamepad2.y)
+        if (gamepad2.y) {
             climbing = true;
-        else if(gamepad2.x)
+            driveMode = DriveMode.AUTO;
+        } else if (gamepad2.x) {
             climbing = false;
+            driveMode = DriveMode.AUTO;
+        }
 
-        if(climbing){
-            if(hook1.getCurrentPosition() < 25009)
-                hook1.setPower(1);
-            else
-                hook1.setPower(0);
-            if(sling.getCurrentPosition() < 20100)
-                sling.setPower((sling.getCurrentPosition() < 16500) ? .95f : .8f);
-            else
-                sling.setPower(0);
-        } else if(gamepad2.x){
-            sling.setPower((sling.getCurrentPosition() < 16500) ? -.95f : -.8f);
-            hook1.setPower(-1f);
-        } else{
-            sling.setPower(0);
-            hook1.setPower(0);
+        if (gamepad2.left_stick_y != 0 || gamepad2.right_stick_y != 0)
+            driveMode = DriveMode.MANUAL;
+
+
+        if (driveMode == DriveMode.AUTO) {
+            if (climbing) {
+                if (hook.getCurrentPosition() < 25009) //max
+                    hook.setPower(1);
+                else
+                    hook.setPower(0);
+                if (lift.getCurrentPosition() < 20100) //max
+                    lift.setPower((lift.getCurrentPosition() < 10000) ? .95f : .75f); //nivel schimbare
+                else
+                    lift.setPower(0);
+            } else if (gamepad2.x) {
+                lift.setPower((lift.getCurrentPosition() < 10000) ? -.95f : -.75f); //nivel schimbare
+                hook.setPower(-1f);
+            } else {
+                lift.setPower(0);
+                hook.setPower(0);
+            }
+        } else { // manual
+            lift.setPower(-gamepad2.left_stick_y);
+            hook.setPower(-gamepad2.right_stick_y);
+        }
+
+        //reset pozitie 0
+        if (gamepad2.share) {
+            lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            hook.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            hook.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
     }
@@ -144,15 +171,11 @@ public class DrivingPower extends OpMode {
     }
 
     private void debugTelemetry() {
-        telemetry.addData("roata stanga", left.getCurrentPosition());
-        telemetry.addData("roata dreapta", right.getCurrentPosition());
-        telemetry.addData("xleftstick", gamepad1.left_stick_x);
-        telemetry.addData("yleftstick", gamepad1.left_stick_y);
-        telemetry.addData("platepos", plate.getCurrentPosition());
+        telemetry.addData("driveMode", driveMode);
+        telemetry.addData("placa", plate.getCurrentPosition());
         telemetry.addData("front", front.getPosition());
-        telemetry.addData("lift", sling.getCurrentPosition());
-        telemetry.addData("carlig", hook1.getCurrentPosition());
-        telemetry.addData("share", gamepad1.share);
+        telemetry.addData("lift", lift.getCurrentPosition());
+        telemetry.addData("carlig", hook.getCurrentPosition());
         telemetry.update();
     }
 
