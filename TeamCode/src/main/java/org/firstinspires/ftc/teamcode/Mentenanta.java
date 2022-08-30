@@ -76,32 +76,34 @@ public class Mentenanta extends OpMode {
 
         debugTelemetry();
 
-        if (gamepad1.a && !gamepad1.share) upPlate();
-        else downPlate();
+        if (gamepad1.a)
+            upPlate();
+        else
+            downPlate();
 
         left.setPower(leftPower);
         right.setPower(rightPower);
 
-        if(gamepad1.share) {
-            if (gamepad1.y)
+        if(gamepad2.share) {
+            if (gamepad2.y)
                 sling.setPower(1);
-            else if (gamepad1.a)
+            else if (gamepad2.a)
                 sling.setPower(-1);
             else
                 sling.setPower(0);
 
-            if (gamepad1.x) {
+            if (gamepad2.x) {
                 hook1.setPower(1);
-            } else if (gamepad1.b) {
+            } else if (gamepad2.b) {
                 hook1.setPower(-1);
             } else {
                 hook1.setPower(0);
             }
         } else{
-            if(gamepad1.y) {
+            if(gamepad2.y) {
                 sling.setPower(.95f);
                 hook1.setPower(1f);
-            } else if(gamepad1.x) {
+            } else if(gamepad2.x) {
                 sling.setPower(-.95f);
                 hook1.setPower(-1f);
             } else {
@@ -149,7 +151,7 @@ public class Mentenanta extends OpMode {
         telemetry.addData("front", front.getPosition());
         telemetry.addData("lift", sling.getCurrentPosition());
         telemetry.addData("carlig", hook1.getCurrentPosition());
-        telemetry.addData("share", gamepad1.share);
+        telemetry.addData("share", gamepad2.share);
         telemetry.update();
     }
 

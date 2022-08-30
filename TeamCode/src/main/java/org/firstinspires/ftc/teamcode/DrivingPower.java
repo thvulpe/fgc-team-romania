@@ -78,8 +78,10 @@ public class DrivingPower extends OpMode {
 
         debugTelemetry();
 
-        if (gamepad1.a && !gamepad1.share) upPlate();
-        else downPlate();
+        if (gamepad1.a)
+            upPlate();
+        else
+            downPlate();
 
         left.setPower(leftPower);
         right.setPower(rightPower);
@@ -89,9 +91,9 @@ public class DrivingPower extends OpMode {
 
         //switch lift 18479 carlig 21823
 
-        if(gamepad1.y)
+        if(gamepad2.y)
             climbing = true;
-        else if(gamepad1.x)
+        else if(gamepad2.x)
             climbing = false;
 
         if(climbing){
@@ -103,7 +105,7 @@ public class DrivingPower extends OpMode {
                 sling.setPower((sling.getCurrentPosition() < 16500) ? .95f : .8f);
             else
                 sling.setPower(0);
-        } else if(gamepad1.x){
+        } else if(gamepad2.x){
             sling.setPower((sling.getCurrentPosition() < 16500) ? -.95f : -.8f);
             hook1.setPower(-1f);
         } else{
