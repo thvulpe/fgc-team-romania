@@ -121,7 +121,7 @@ public class DrivingPower extends OpMode {
                 else
                     lift.setPower(0);
             } else if (gamepad2.x) {
-                lift.setPower((lift.getCurrentPosition() < 10000) ? -.95f : -.75f); //nivel schimbare
+                lift.setPower((lift.getCurrentPosition() < 8000) ? -.65f : -.75f); //nivel schimbare
                 hook.setPower(-1f);
             } else {
                 lift.setPower(0);
