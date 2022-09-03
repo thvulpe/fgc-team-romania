@@ -67,7 +67,8 @@ public class DrivingPower extends OpMode {
 
     enum DriveMode {
         AUTO,
-        MANUAL
+        MANUAL,
+        HOLD
     }
 
     DriveMode driveMode = DriveMode.MANUAL;
@@ -109,27 +110,35 @@ public class DrivingPower extends OpMode {
         if (gamepad2.left_stick_y != 0 || gamepad2.right_stick_y != 0)
             driveMode = DriveMode.MANUAL;
 
+        if(gamepad2.left_bumper) driveMode = DriveMode.HOLD;
+        else if(gamepad2.right_bumper) driveMode = DriveMode.MANUAL;
 
         if (driveMode == DriveMode.AUTO) {
+            hook.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             if (climbing) {
-                if (hook.getCurrentPosition() < 25009) //max
+                if (hook.getCurrentPosition() < 26009) //max
                     hook.setPower(1);
                 else
                     hook.setPower(0);
-                if (lift.getCurrentPosition() < 20100) //max
+                if (lift.getCurrentPosition() < 20430) //max // 20100
                     lift.setPower((lift.getCurrentPosition() < 10000) ? .95f : .75f); //nivel schimbare
                 else
                     lift.setPower(0);
             } else if (gamepad2.x) {
-                lift.setPower((lift.getCurrentPosition() < 8000) ? -.65f : -.75f); //nivel schimbare
+                lift.setPower((lift.getCurrentPosition() > 3000) ? ((lift.getCurrentPosition() < 8000) ? -.65f : -.75f) : 0); //nivel schimbare
                 hook.setPower(-1f);
             } else {
                 lift.setPower(0);
                 hook.setPower(0);
             }
-        } else { // manual
+        } else  if(driveMode == DriveMode.MANUAL) { // manual
+            hook.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             lift.setPower(-gamepad2.left_stick_y);
             hook.setPower(-gamepad2.right_stick_y);
+        } else {
+            hook.setTargetPosition(hook.getCurrentPosition());
+            hook.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            hook.setPower(1);
         }
 
         //reset pozitie 0
