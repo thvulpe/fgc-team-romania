@@ -76,7 +76,7 @@ public class DrivingPower extends OpMode {
     @Override
     public void loop() {
         float sp = gamepad1.right_bumper ? 0.4f : 1f;
-        float ms = gamepad1.left_bumper ? 1f : 0.8f;
+        float ms = 1f; //gamepad1.left_bumper ? 1f : 1f
 
         float leftPower = (-gamepad1.left_trigger + gamepad1.right_trigger - gamepad1.left_stick_y) * sp * ms;
         float rightPower = (gamepad1.left_trigger - gamepad1.right_trigger - gamepad1.left_stick_y) * sp * ms;
