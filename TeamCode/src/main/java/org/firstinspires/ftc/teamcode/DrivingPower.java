@@ -71,7 +71,14 @@ public class DrivingPower extends OpMode {
         HOLD
     }
 
+    enum StorageLevel {
+        HIGH,
+        MID,
+        DEFAULT
+    }
+
     DriveMode driveMode = DriveMode.MANUAL;
+    StorageLevel stLevel = StorageLevel.DEFAULT;
 
     @Override
     public void loop() {
@@ -100,10 +107,15 @@ public class DrivingPower extends OpMode {
         //switch lift 18479 carlig 21823
 
         if (gamepad2.y) {
-            climbing = true;
+            //climbing = true;
+            stLevel = StorageLevel.HIGH;
             driveMode = DriveMode.AUTO;
-        } else if (gamepad2.x) {
-            climbing = false;
+        } else if(gamepad2.a) {
+            stLevel = StorageLevel.MID;
+            driveMode = DriveMode.AUTO;
+        }else if (gamepad2.x) {
+            //climbing = false;
+            stLevel = StorageLevel.DEFAULT;
             driveMode = DriveMode.AUTO;
         }
 
@@ -115,17 +127,27 @@ public class DrivingPower extends OpMode {
 
         if (driveMode == DriveMode.AUTO) {
             hook.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            if (climbing) {
-                if (hook.getCurrentPosition() < 26009) //max
-                    hook.setPower(1);
+            if (stLevel == StorageLevel.HIGH) {
+                if (hook.getCurrentPosition() < 21500) //max 26009
+                    hook.setPower(0.95f);
                 else
                     hook.setPower(0);
-                if (lift.getCurrentPosition() < 20430) //max // 20100
-                    lift.setPower((lift.getCurrentPosition() < 10000) ? .95f : .75f); //nivel schimbare
+                if (lift.getCurrentPosition() < 19800) //max // 20100, 20000
+                    lift.setPower(1); //nivel schimbare, .95f, .75f
                 else
                     lift.setPower(0);
-            } else if (gamepad2.x) {
-                lift.setPower((lift.getCurrentPosition() > 3000) ? ((lift.getCurrentPosition() < 8000) ? -.65f : -.75f) : 0); //nivel schimbare
+            } else if(stLevel == StorageLevel.MID) {
+                if (hook.getCurrentPosition() < 12515) //max 26009
+                    hook.setPower(0.95f);
+                else
+                    hook.setPower(0);
+                if (lift.getCurrentPosition() < 11263) //max // 20100
+                    lift.setPower(1); //nivel schimbare, .95f, .75f
+                else
+                    lift.setPower(0);
+            }
+            else if (gamepad2.x) {
+                lift.setPower((lift.getCurrentPosition() > 3000) ? ((lift.getCurrentPosition() < 8000) ? -.65f : -.75f) : 0); //nivel schimbare, -.65, -.75f
                 hook.setPower(-1f);
             } else {
                 lift.setPower(0);
