@@ -66,7 +66,7 @@ public class Mentenanta extends OpMode {
 
     @Override
     public void loop() {
-        plate.setPower(gamepad1.left_stick_y * .4f);
+        plate.setPower(gamepad1.left_stick_y * .1f);
         lift.setPower(-gamepad2.left_stick_y);
         hook.setPower(-gamepad2.right_stick_y);
     }
