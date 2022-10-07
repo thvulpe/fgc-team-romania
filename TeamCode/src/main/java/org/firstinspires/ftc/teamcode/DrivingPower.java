@@ -186,7 +186,7 @@ public class DrivingPower extends OpMode {
         if (!waitingLift) {
             lifted = true;
             plate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            if (plate.getCurrentPosition() < 70)
+            if (plate.getCurrentPosition() < 85) //70
                 plate.setPower(0.5);
             else plate.setPower(0);
         }
