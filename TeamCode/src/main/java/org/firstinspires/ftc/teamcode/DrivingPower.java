@@ -80,6 +80,8 @@ public class DrivingPower extends OpMode {
     DriveMode driveMode = DriveMode.MANUAL;
     StorageLevel stLevel = StorageLevel.DEFAULT;
 
+    int hookCP = 0;
+
     @Override
     public void loop() {
         float sp = gamepad1.right_bumper ? 0.4f : 1f;
@@ -93,8 +95,8 @@ public class DrivingPower extends OpMode {
 
         debugTelemetry();
 
-        if (gamepad1.a)
-            upPlate();
+        if (gamepad1.a || gamepad1.b)
+            upPlate(gamepad1.a ? 1f : .5f);
         else
             downPlate();
 
@@ -122,6 +124,7 @@ public class DrivingPower extends OpMode {
         if (gamepad2.left_stick_y != 0 || gamepad2.right_stick_y != 0)
             driveMode = DriveMode.MANUAL;
 
+
         if(gamepad2.left_bumper) driveMode = DriveMode.HOLD;
         else if(gamepad2.right_bumper) driveMode = DriveMode.MANUAL;
 
@@ -129,7 +132,7 @@ public class DrivingPower extends OpMode {
             hook.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             if (stLevel == StorageLevel.HIGH) {
                 if (hook.getCurrentPosition() < 19905) //max 26009
-                    hook.setPower(0.95f);
+                    hook.setPower(0.9f); //.95f
                 else
                     hook.setPower(0);
                 if (lift.getCurrentPosition() < 19800) //max // 20100, 20000
@@ -138,7 +141,7 @@ public class DrivingPower extends OpMode {
                     lift.setPower(0);
             } else if(stLevel == StorageLevel.MID) {
                 if (hook.getCurrentPosition() < 12600) //max 26009
-                    hook.setPower(0.95f);
+                    hook.setPower(0.9f); //.95f
                 else
                     hook.setPower(0);
                 if (lift.getCurrentPosition() < 11500) //max // 20100
@@ -158,10 +161,13 @@ public class DrivingPower extends OpMode {
             lift.setPower(-gamepad2.left_stick_y);
             hook.setPower(-gamepad2.right_stick_y);
         } else {
-            hook.setTargetPosition(hook.getCurrentPosition());
+            hook.setTargetPosition(hookCP);
             hook.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             hook.setPower(1);
         }
+
+        if(driveMode != DriveMode.HOLD)
+            hookCP = hook.getCurrentPosition();
 
         //reset pozitie 0
         if (gamepad2.share) {
@@ -175,7 +181,7 @@ public class DrivingPower extends OpMode {
 
     boolean waitingLift = false, lifted = false;
 
-    private void upPlate() {
+    private void upPlate(float power) {
         front.setPosition(0.15);
         if (!waitingLift && !lifted) {
             waitingLift = true;
@@ -187,7 +193,7 @@ public class DrivingPower extends OpMode {
             lifted = true;
             plate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             if (plate.getCurrentPosition() < 85) //70
-                plate.setPower(0.5);
+                plate.setPower(power); //.5 skill 1 normal
             else plate.setPower(0);
         }
     }
