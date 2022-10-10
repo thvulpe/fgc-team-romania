@@ -131,11 +131,11 @@ public class DrivingPower extends OpMode {
         if (driveMode == DriveMode.AUTO) {
             hook.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             if (stLevel == StorageLevel.HIGH) {
-                if (hook.getCurrentPosition() < 19905) //max 26009
+                if (hook.getCurrentPosition() < 19800) //max 26009
                     hook.setPower(0.9f); //.95f
                 else
                     hook.setPower(0);
-                if (lift.getCurrentPosition() < 19800) //max // 20100, 20000
+                if (lift.getCurrentPosition() < 19600) //max // 20100, 20000
                     lift.setPower(1); //nivel schimbare, .95f, .75f
                 else
                     lift.setPower(0);
