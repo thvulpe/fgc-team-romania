@@ -31,6 +31,7 @@ Our robot was designed to collect and store perforated black balls representing 
 ## 📸 Media
 
 ![Team Robot - Geneva 2022](IMG_3640.jpg)
+![Team Robot - Geneva 2022](IMG_3621.jpg)
 
 ## 📺 Videos
 
