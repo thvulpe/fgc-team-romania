@@ -37,7 +37,7 @@ Our robot was designed to collect and store perforated black balls representing 
 
 Watch highlights of the competition:
 
-[2022 FIRST Global Challenge – Day 1](https://www.youtube.com/watch?v=R76IUxR1dXg)
+[2022 FIRST Global Challenge – Day 1]([https://www.youtube.com/watch?v=R76IUxR1dXg](https://www.youtube.com/watch?v=UBaj4bZVTzs))
 
 ## 📄 License
 
