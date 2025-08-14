@@ -21,16 +21,18 @@ Our robot was designed to collect and store perforated black balls representing 
 - `libs/` – External libraries used
 - `gradle/` – Gradle build configuration files
 
-## 🛠️ Technologies Used
-
-- Java (FTC SDK)
-- Android Studio
-- REV Robotics controllers
 
 ## 📸 Media
 
+![Team Robot - Geneva 2022](IMG_3640.jpg)
 ![Team Robot - Geneva 2022](pic10.jpg)
 ![Team Robot - Geneva 2022](IMG_3621.jpg)
+
+## 🛠️ Technologies Used
+
+- Java
+- REV Robotics controllers / FTC SDK Platform
+- Android Studio
 
 ## 📺 Videos
 
